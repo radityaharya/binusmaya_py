@@ -1,6 +1,5 @@
 import string
 import requests
-from dateutil import parser
 import time
 import datetime
 import json
@@ -107,7 +106,7 @@ class bimay:
         self.schedule_base_url = "https://func-bm7-schedule-prod.azurewebsites.net"
         self.r = requests.Session()
 
-    def __get_data(self, url, json_data=None, params=None, headers=None):
+    def __get_data(self, url, json_data=None, params=None, headers=None) -> dict:
         """
         Description
         ----------
@@ -133,9 +132,11 @@ class bimay:
         response = self.r.get(url, params=params, json=json_data, headers=headers)
         if response.status_code == 200:
             return response.json()
-        raise Exception(response.text)
+        if response.status_code == 204:
+            raise Exception("No Content")
+        raise Exception(response.status_code, response.text)
 
-    def __post_data(self, url, json_data=None, params=None, headers=None):
+    def __post_data(self, url, json_data=None, params=None, headers=None) -> dict:
         """
         Description
         ----------
@@ -161,9 +162,11 @@ class bimay:
         response = self.r.post(url, params=params, json=json_data, headers=headers)
         if response.status_code == 200:
             return response.json()
-        raise Exception(response.text)
+        if response.status_code == 204:
+            raise Exception("No Content")
+        raise Exception(response.status_code, response.text)
 
-    def get_latest_academicPeriod(self):
+    def get_latest_academicPeriod(self) -> str:
         """
         Description
         ----------
@@ -178,12 +181,11 @@ class bimay:
         academicPeriod : str
             academicPeriod from BinusMaya
         """
-        url = "{}/func-bm7-course-prod/AcademicPeriod/Student".format(self.base_url)
-        response = self.r.get(url, headers=self.headers)
+        response = self.r.get(f"{self.base_url}/func-bm7-course-prod/AcademicPeriod/Student", headers=self.headers)
         if response.status_code == 200:
             for academicPeriod in response.json():
-                startDate = parser.parse(academicPeriod["termBeginDate"])
-                endDate = parser.parse(academicPeriod["termEndDate"])
+                startDate = datetime.datetime.strptime(academicPeriod["termStartDate"], "%Y-%m-%dT%H:%M:%S")
+                endDate = datetime.datetime.strptime(academicPeriod["termEndDate"], "%Y-%m-%dT%H:%M:%S")
                 if startDate <= datetime.datetime.now() <= endDate:
                     break
             return academicPeriod
@@ -191,7 +193,7 @@ class bimay:
 
     def get_schedule_date(
         self, date_start: datetime.datetime, date_end: datetime.datetime = None
-    ):
+    ) -> dict:
         """
         Description
         ----------
@@ -220,7 +222,7 @@ class bimay:
             )
 
         if date_end is None:
-            return fetch_schedule(date_start)
+            return fetch_schedule(date= date_start)["Schedule"]
         else:
             schedules = []
             for date in (
@@ -234,7 +236,7 @@ class bimay:
             return data
 
     # dispose this? feels redundant
-    def get_schedule_month(self, date: datetime.datetime):
+    def get_schedule_month(self, date: datetime.datetime) -> dict:
         """
         Description
         ----------
@@ -258,7 +260,7 @@ class bimay:
         )
 
     # --ClassComponent-- #
-    def get_class_component_list(self, period: int = None):
+    def get_class_component_list(self, period: int = None) -> dict:
         """
         Description
         ----------
@@ -284,8 +286,8 @@ class bimay:
 
     # --classes-- #
     def get_class_from_component(
-        self, period: int = None, classComponentId: string = None
-    ):
+        self, period: int = None, classComponentId: str = None
+    ) -> dict:
         """
         Description
         ----------
@@ -296,7 +298,7 @@ class bimay:
         period : int optional
             period to get class from (default: latest academicPeriod)
 
-        classComponentId : string mandatory
+        classComponentId : str mandatory
             classComponentId to get class from
 
         Returns
@@ -312,7 +314,7 @@ class bimay:
             f"{self.base_url}/func-bm7-course-prod/Course/Period/{period}/Component/{classComponentId}/Student"
         )
 
-    def get_class_active(self):
+    def get_class_active(self) -> dict:
         """
         Description
         ----------
@@ -332,7 +334,7 @@ class bimay:
         )
 
     # --classSessions-- #
-    def __default_classSessionId(self):
+    def __default_classSessionId(self) -> str:
         """
         Description
         ----------
@@ -344,7 +346,7 @@ class bimay:
 
         Returns
         -------
-        classSessionId : string
+        classSessionId : str
             default classSessionId from ongoing(if any) class or upcoming(if any) class
         """
         ongoing = self.__get_data(
@@ -357,7 +359,7 @@ class bimay:
             return upcoming["id"]
         return ongoing["id"]
 
-    def get_class_sessions_from_class_id(self, classId: string):
+    def get_class_sessions_from_class_id(self, classId: str) -> dict:
         """
         Description
         ----------
@@ -365,7 +367,7 @@ class bimay:
 
         Parameters
         ----------
-        classId : string mandatory
+        classId : str mandatory
             classId to get class sessions from
 
         Returns
@@ -377,7 +379,7 @@ class bimay:
             f"{self.base_url}/func-bm7-course-prod/ClassSession/Class/{classId}/Student"
         )
 
-    def get_class_session_detail(self, classSessionId: string = None):
+    def get_class_session_detail(self, classSessionId: str = None) -> dict:
         """
         Description
         ----------
@@ -385,7 +387,7 @@ class bimay:
 
         Parameters
         ----------
-        classSessionId : string optional
+        classSessionId : str optional
             classSessionId to get class session detail from (default: classSessionId from ongoing(if any) class or upcoming(if any) class)
 
         Returns
@@ -400,7 +402,7 @@ class bimay:
         )
 
     # --resource-- #
-    def get_resource_from_resource_id(self, resourceId: string = None):
+    def get_resource_from_resource_id(self, resourceId: str = None) -> dict:
         """
         Description
         ----------
@@ -408,7 +410,7 @@ class bimay:
 
         Parameters
         ----------
-        resourceId : string mandatory
+        resourceId : str mandatory
             resourceId to get resource from
 
         Returns
@@ -420,7 +422,7 @@ class bimay:
             f"{self.base_url}/func-bm7-course-prod/ClassSession/Session/Resource/{resourceId}"
         )
 
-    def get_ppt_from_session_id(self, classSessionId: string = None):
+    def get_ppt_from_session_id(self, classSessionId: str = None) -> dict:
         """
         Description
         ----------
@@ -429,7 +431,7 @@ class bimay:
 
         Parameters
         ----------
-        classSessionId : string optional
+        classSessionId : str optional
             classSessionId to get ppt from (default: classSessionId from ongoing(if any) class or upcoming(if any) class)
 
         Returns
@@ -438,7 +440,7 @@ class bimay:
             ppt link from BinusMaya (if any)
         """
 
-        def get_source_url(self, resourceId: string):
+        def get_source_url(self, resourceId: str) -> str:
             """
             -args: resourceId
             """
@@ -456,7 +458,7 @@ class bimay:
                 return get_source_url(resources[i]["id"])
 
     # --forum-- #
-    def get_forum_latest(self, classId: string = None):
+    def get_forum_latest(self, classId: str = None) -> dict:
         """
         Description
         ----------
@@ -464,7 +466,7 @@ class bimay:
 
         Parameters
         ----------
-        classId : string optional
+        classId : str optional
             classId to get forum from (default: ongoing(if any) class or upcoming(if any) class)
 
         Returns
@@ -483,7 +485,7 @@ class bimay:
                 json_data=[{"classId": classId}],
             )
 
-    def get_forum_from_class_id(self, classId: string = None):
+    def get_forum_from_class_id(self, classId: str = None) -> dict:
         """
         Description
         ----------
@@ -491,7 +493,7 @@ class bimay:
 
         Parameters
         ----------
-        classId : string optional
+        classId : str optional
             classId to get forum from (default: ongoing(if any) class or upcoming(if any) class)
 
         Returns
@@ -503,7 +505,7 @@ class bimay:
             f"{self.base_url}/func-bm7-course-prod/Forum/Class/{classId}/Student"
         )
 
-    def get_forum_thread(self, classId: string = None, sessionId: string = None):
+    def get_forum_thread(self, classId: str = None, sessionId: str = None) -> dict:
         """
         Description
         ----------
@@ -511,7 +513,7 @@ class bimay:
 
         Parameters
         ----------
-        classId : string optional
+        classId : str optional
             classId to get forum thread from (default: ongoing(if any) class or upcoming(if any) class)
 
         Returns
@@ -526,7 +528,7 @@ class bimay:
             json_data={"TotalDataPerPage": 100},
         )
 
-    def get_forum_thread_content(self, classId: string = None, threadId: string = None):
+    def get_forum_thread_content(self, classId: str = None, threadId: str = None) -> dict:
         """
         Description
         ----------
@@ -534,10 +536,10 @@ class bimay:
 
         Parameters
         ----------
-        classId : string optional
+        classId : str optional
             classId to get forum thread content from (default: latest thread)
         
-        threadId : string optional
+        threadId : str optional
             threadId to get forum thread content from (default: latest thread)
             
         Returns
@@ -553,7 +555,7 @@ class bimay:
             params={"originMultiClassId": None},
         )
 
-    def get_forum_thread_comment(self, classId: string = None, threadId: string = None):
+    def get_forum_thread_comment(self, classId: str = None, threadId: str = None) -> dict:
         """
         Description
         ----------
@@ -561,10 +563,10 @@ class bimay:
 
         Parameters
         ----------
-        classId : string optional
+        classId : str optional
             classId to get forum thread comment from (default: latest thread)
         
-        threadId : string optional
+        threadId : str optional
             threadId to get forum thread comment from (default: latest thread)
         
         Returns
