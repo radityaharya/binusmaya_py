@@ -86,3 +86,6 @@ print(bm.get_schedule_date(date_start = datetime.datetime.now()))
   }
 ]
 ```
+
+Disclaimer: This project is not affiliated, associated, authorized, endorsed by, or in any way officially related to "Bina Nusantara University" and or "BinusMaya" and it is used for personal use only.
+contact@otid.site
