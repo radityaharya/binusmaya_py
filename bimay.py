@@ -7,11 +7,88 @@ import json
 
 
 class bimay:
+    """
+    Attributes
+    ----------
+    roleId : str
+        roleId from bimay
+    token : str
+        Bearer token from bimay
+
+    Methods
+    -------
+
+    --schedule--
+
+    get_latest_academicPeriod()
+        returns: latest academic period
+
+    get_schedule_date(date_start, date_end)
+        returns: schedule date from date_start to date_end
+
+    get_schedule_month(date)
+        returns: schedule date from date to date
+
+    get_class_component_list(period)
+        returns: class component list
+
+    get_class_from_component(period, classComponentId)
+        returns: Array of class information dicts [{"classId","classCode","courseName", "courseCode", "lecturers[]", "progressClass", "ssrComponent", "classGroupId"}]
+
+    get_class_active()
+        returns: Array of active classes
+
+    --classSessions--
+
+    get_class_session_from_class_id(classId)
+        returns: class session information from given classId
+
+    get_class_session_detail(classSessionId)
+        returns: class session detail information from given classSessionId (defaults to ongoing/upcoming class session)
+
+    --resources--
+
+    get_resource_from_resource_id(resourceId)
+        returns: resource information from given resourceId
+
+    get_ppt_from_session_id(classSessionId)
+        returns: ppt direct link from given classSessionId
+
+    --forum--
+
+    get_forum_latest(classId)
+        returns: latest forum information from given classId (defaults to all active classId)
+
+    get_forum_from_class_id(classId)
+        returns: forum informations from given classId
+
+    get_forum_thread(classId, sessionId)
+        returns: forum thread information including threadId from given classId and sessionId
+
+    get_forum_thread_content(classId, threadId)
+        returns: forum thread content information from given classId and threadId (defaults to latest thread)
+
+    get_forum_thread_comment(classId, threadId)
+        returns: forum thread comment information from given classId and threadId (defaults to latest thread)
+    """
+
     def __init__(self, roleId, token):
         """
-        args:
-        -roleId: roleId from bimay
-        -token: Bearer token from bimay
+        Description
+        ----------
+        constructs bimay object
+
+        Parameters
+        ----------
+        roleId : str mandatory
+            roleId from bimay
+
+        token : str mandatory
+            Bearer token from bimay
+
+        Returns
+        -------
+        None
         """
         if token.startswith("Bearer "):
             token = token[7:]
@@ -30,14 +107,27 @@ class bimay:
         self.schedule_base_url = "https://func-bm7-schedule-prod.azurewebsites.net"
         self.r = requests.Session()
 
-    def config(self, dict):
-        """
-        dict = {
-
-        """
-        self.conf = dict
-
     def __get_data(self, url, json_data=None, params=None, headers=None):
+        """
+        Description
+        ----------
+        creates a get request to given url with given json_data and headers
+
+        Parameters
+        ----------
+        url : str mandatory
+            url to get data from
+
+        json_data : dict optional
+            json data to be sent to url
+
+        params : dict optional
+            params to be sent to url
+
+        Returns
+        -------
+        response.json()
+        """
         if headers is None:
             headers = self.headers
         response = self.r.get(url, params=params, json=json_data, headers=headers)
@@ -46,6 +136,26 @@ class bimay:
         raise Exception(response.text)
 
     def __post_data(self, url, json_data=None, params=None, headers=None):
+        """
+        Description
+        ----------
+        creates a post request to given url with given json_data and headers
+
+        Parameters
+        ----------
+        url : str mandatory
+            url to get data from
+
+        json_data : dict optional
+            json data to be sent to url
+
+        params : dict optional
+            params to be sent to url
+
+        Returns
+        -------
+        response.json()
+        """
         if headers is None:
             headers = self.headers
         response = self.r.post(url, params=params, json=json_data, headers=headers)
@@ -54,6 +164,20 @@ class bimay:
         raise Exception(response.text)
 
     def get_latest_academicPeriod(self):
+        """
+        Description
+        ----------
+        fetches latest academicPeriod from BinusMaya
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        academicPeriod : str
+            academicPeriod from BinusMaya
+        """
         url = "{}/func-bm7-course-prod/AcademicPeriod/Student".format(self.base_url)
         response = self.r.get(url, headers=self.headers)
         if response.status_code == 200:
@@ -69,13 +193,22 @@ class bimay:
         self, date_start: datetime.datetime, date_end: datetime.datetime = None
     ):
         """
-        --get_schedule_date(date_start, date_end)
-        returns: schedule date from date_start to date_end in json format
+        Description
+        ----------
+        fetches schedule date from BinusMaya
 
-        or
+        Parameters
+        ----------
+        date_start : datetime.datetime mandatory
+            date_start to get schedule from
 
-        --get_schedule_date(date_start)
-        returns: schedule date from date to date in json format
+        date_end : datetime.datetime optional
+            date_end to get schedule from
+
+        Returns
+        -------
+        schedule : dict
+            schedule from BinusMaya
         """
 
         def fetch_schedule(date):
@@ -103,8 +236,19 @@ class bimay:
     # dispose this? feels redundant
     def get_schedule_month(self, date: datetime.datetime):
         """
-        --get_schedule_month(date)
-        returns: schedule date from date to date in json format
+        Description
+        ----------
+        fetches schedule month from BinusMaya
+
+        Parameters
+        ----------
+        date : datetime.datetime mandatory
+            date to get schedule from
+
+        Returns
+        -------
+        schedule : dict
+            schedule from BinusMaya
         """
         return self.__post_data(
             "{}/api/schedule/Month-v1/{}".format(
@@ -116,8 +260,19 @@ class bimay:
     # --ClassComponent-- #
     def get_class_component_list(self, period: int = None):
         """
-        -args: period default is current academic period
-        -returns: class component list in json format
+        Description
+        ----------
+        fetches class component list ["LEC", "LAB", "TUT", etc.] from BinusMaya
+
+        Parameters
+        ----------
+        period : int optional
+            period to get class component list from (default: latest academicPeriod)
+
+        Returns
+        -------
+        classComponentList : list
+            class component list from BinusMaya
         """
         if period is None:
             period = self.get_latest_academicPeriod()["academicPeriod"]
@@ -132,9 +287,22 @@ class bimay:
         self, period: int = None, classComponentId: string = None
     ):
         """
-        -args: period ("LEC", "LAB", "TUT", etc.) default is current academic period
+        Description
+        ----------
+        fetches class from BinusMaya by classComponentId and period
 
-        -returns: Array of class information dicts [{"classId","classCode","courseName", "courseCode", "lecturers[]", "progressClass", "ssrComponent", "classGroupId"}]
+        Parameters
+        ----------
+        period : int optional
+            period to get class from (default: latest academicPeriod)
+
+        classComponentId : string mandatory
+            classComponentId to get class from
+
+        Returns
+        -------
+        class : dict
+            class from BinusMaya
         """
         if period is None:
             period = self.get_latest_academicPeriod()["academicPeriod"]
@@ -146,7 +314,18 @@ class bimay:
 
     def get_class_active(self):
         """
-        -returns: Array of active classes
+        Description
+        ----------
+        fetches current attended classes from BinusMaya
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        class : dict
+            current attended classes from BinusMaya
         """
         return self.__get_data(
             f"{self.base_url}/func-bm7-course-prod/Class/Active/Student"
@@ -154,6 +333,20 @@ class bimay:
 
     # --classSessions-- #
     def __default_classSessionId(self):
+        """
+        Description
+        ----------
+        an internal function to get default classSessionId
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        classSessionId : string
+            default classSessionId from ongoing(if any) class or upcoming(if any) class
+        """
         ongoing = self.__get_data(
             f"{self.base_url}/func-bm7-course-prod/ClassSession/Ongoing/student"
         )
@@ -164,10 +357,21 @@ class bimay:
             return upcoming["id"]
         return ongoing["id"]
 
-    def get_class_sessions_from_classId(self, classId: string):
+    def get_class_sessions_from_class_id(self, classId: string):
         """
-        -args: classId
-        -returns: class sessions information from given classId
+        Description
+        ----------
+        fetches class sessions from BinusMaya by classId
+
+        Parameters
+        ----------
+        classId : string mandatory
+            classId to get class sessions from
+
+        Returns
+        -------
+        classSessions : dict
+            class sessions from BinusMaya
         """
         return self.__get_data(
             f"{self.base_url}/func-bm7-course-prod/ClassSession/Class/{classId}/Student"
@@ -175,8 +379,19 @@ class bimay:
 
     def get_class_session_detail(self, classSessionId: string = None):
         """
-        -args: classSessionId | defaults to ongoing / upcoming classSessionId
-        -returns: class session detail information from given classSessionId
+        Description
+        ----------
+        fetches class session detail from BinusMaya by classSessionId
+
+        Parameters
+        ----------
+        classSessionId : string optional
+            classSessionId to get class session detail from (default: classSessionId from ongoing(if any) class or upcoming(if any) class)
+
+        Returns
+        -------
+        classSessionDetail : dict
+            class session detail from BinusMaya
         """
         if classSessionId is None:
             classSessionId = self.__default_classSessionId()
@@ -186,14 +401,41 @@ class bimay:
 
     # --resource-- #
     def get_resource_from_resource_id(self, resourceId: string = None):
+        """
+        Description
+        ----------
+        fetches resource from BinusMaya by resourceId
+
+        Parameters
+        ----------
+        resourceId : string mandatory
+            resourceId to get resource from
+
+        Returns
+        -------
+        resource : dict
+            resource from BinusMaya (if any)
+        """
         return self.__get_data(
             f"{self.base_url}/func-bm7-course-prod/ClassSession/Session/Resource/{resourceId}"
         )
 
-    def get_ppt_from_session_id(self, sessionId: string = None):
+    def get_ppt_from_session_id(self, classSessionId: string = None):
         """
-        args: sessionId
-        returns: ppt url (https://databinuscampussolution.blob.core.windows.net/bol/.....)
+        Description
+        ----------
+        fetches ppt from BinusMaya by classSessionId (if any)
+        the url obtained differs from the one in get_resource_from_resource_id, this url appears to be from the object storage
+
+        Parameters
+        ----------
+        classSessionId : string optional
+            classSessionId to get ppt from (default: classSessionId from ongoing(if any) class or upcoming(if any) class)
+
+        Returns
+        -------
+        ppt_link: str
+            ppt link from BinusMaya (if any)
         """
 
         def get_source_url(self, resourceId: string):
@@ -208,7 +450,7 @@ class bimay:
                 return response.headers["x-ms-copy-source"]
             raise Exception(response.text)
 
-        resources = self.get_class_session_detail(sessionId)["resources"]
+        resources = self.get_class_session_detail(classSessionId)["resources"]
         for i in range(len(resources)):
             if resources[i]["resourceType"] == "Document":
                 return get_source_url(resources[i]["id"])
@@ -216,8 +458,19 @@ class bimay:
     # --forum-- #
     def get_forum_latest(self, classId: string = None):
         """
-        -args: classId defaults to all active class
-        -returns: forum information from given classId
+        Description
+        ----------
+        fetches forum from BinusMaya by classId (default: ongoing(if any) class or upcoming(if any) class)
+
+        Parameters
+        ----------
+        classId : string optional
+            classId to get forum from (default: ongoing(if any) class or upcoming(if any) class)
+
+        Returns
+        -------
+        forum : dict
+            forum information from BinusMaya (if any)
         """
         if classId is None:
             return self.__post_data(
@@ -231,28 +484,97 @@ class bimay:
             )
 
     def get_forum_from_class_id(self, classId: string = None):
-        """ """
+        """
+        Description
+        ----------
+        fetches forum from BinusMaya by classId (default: ongoing(if any) class or upcoming(if any) class)
+
+        Parameters
+        ----------
+        classId : string optional
+            classId to get forum from (default: ongoing(if any) class or upcoming(if any) class)
+
+        Returns
+        -------
+        forum : dict
+            forum information from BinusMaya (if any)
+        """
         return self.__get_data(
             f"{self.base_url}/func-bm7-course-prod/Forum/Class/{classId}/Student"
         )
 
     def get_forum_thread(self, classId: string = None, sessionId: string = None):
         """
-        args: classId, sessionId
-        returns: forum thread information including threadId from given classId and sessionId
+        Description
+        ----------
+        fetches forum thread from BinusMaya by classId and sessionId (default: ongoing(if any) class or upcoming(if any) class)
+
+        Parameters
+        ----------
+        classId : string optional
+            classId to get forum thread from (default: ongoing(if any) class or upcoming(if any) class)
+
+        Returns
+        -------
+        forum : dict
+            forum information from BinusMaya (if any)
         """
-        return self.__get_data(
+        if classId is None:
+            classId = self.__default_classId()
+        return self.__post_data(
             f"{self.base_url}/func-bm7-forum-prod/Thread/Class/{classId}/Session/{sessionId}/Paging/1",
             json_data={"TotalDataPerPage": 100},
         )
 
     def get_forum_thread_content(self, classId: string = None, threadId: string = None):
+        """
+        Description
+        ----------
+        fetches forum thread content from BinusMaya by classId and threadId (default: latest thread)
+
+        Parameters
+        ----------
+        classId : string optional
+            classId to get forum thread content from (default: latest thread)
+        
+        threadId : string optional
+            threadId to get forum thread content from (default: latest thread)
+            
+        Returns
+        -------
+        forum : dict
+            forum information from BinusMaya
+        """
+        if classId is None and threadId is None:
+            classId = self.get_forum_latest()["latestPost"][0]["classId"]
+            threadId = self.get_forum_latest()["latestPost"][0]["threadId"]
         return self.__get_data(
             f"{self.base_url}/func-bm7-forum-prod/Forum/{classId}/Thread/{threadId}",
             params={"originMultiClassId": None},
         )
 
     def get_forum_thread_comment(self, classId: string = None, threadId: string = None):
+        """
+        Description
+        ----------
+        fetches forum thread comment from BinusMaya by classId and threadId (default: latest thread)
+
+        Parameters
+        ----------
+        classId : string optional
+            classId to get forum thread comment from (default: latest thread)
+        
+        threadId : string optional
+            threadId to get forum thread comment from (default: latest thread)
+        
+        Returns
+        -------
+        forum : dict
+            forum information from BinusMaya
+        """
+        if classId is None and threadId is None:
+            classId = self.get_forum_latest()["latestPost"][0]["classId"]
+            threadId = self.get_forum_latest()["latestPost"][0]["threadId"]
         return self.__post_data(
             f"{self.base_url}/func-bm7-forum-prod/Comment/Paging/1",
             json_data={
