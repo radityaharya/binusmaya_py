@@ -1,3 +1,3 @@
 # binusmaya.py
 
-Python wrapper for Binusmaya web API. 
+[WIP] Python wrapper for Binusmaya web API. 
