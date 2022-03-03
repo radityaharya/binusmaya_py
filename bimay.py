@@ -166,7 +166,7 @@ class bimay:
             raise Exception("No Content")
         raise Exception(response.status_code, response.text)
 
-    def get_latest_academicPeriod(self) -> str:
+    def get_latest_academicPeriod(self) -> dict:
         """
         Description
         ----------
@@ -178,14 +178,21 @@ class bimay:
 
         Returns
         -------
-        academicPeriod : str
+        academicPeriod : dict
             academicPeriod from BinusMaya
         """
-        response = self.r.get(f"{self.base_url}/func-bm7-course-prod/AcademicPeriod/Student", headers=self.headers)
+        response = self.r.get(
+            f"{self.base_url}/func-bm7-course-prod/AcademicPeriod/Student",
+            headers=self.headers,
+        )
         if response.status_code == 200:
             for academicPeriod in response.json():
-                startDate = datetime.datetime.strptime(academicPeriod["termStartDate"], "%Y-%m-%dT%H:%M:%S")
-                endDate = datetime.datetime.strptime(academicPeriod["termEndDate"], "%Y-%m-%dT%H:%M:%S")
+                startDate = datetime.datetime.strptime(
+                    academicPeriod["termBeginDate"], "%Y-%m-%dT%H:%M:%S"
+                )
+                endDate = datetime.datetime.strptime(
+                    academicPeriod["termEndDate"], "%Y-%m-%dT%H:%M:%S"
+                )
                 if startDate <= datetime.datetime.now() <= endDate:
                     break
             return academicPeriod
@@ -222,7 +229,7 @@ class bimay:
             )
 
         if date_end is None:
-            return fetch_schedule(date= date_start)["Schedule"]
+            return fetch_schedule(date=date_start)["Schedule"]
         else:
             schedules = []
             for date in (
@@ -528,7 +535,9 @@ class bimay:
             json_data={"TotalDataPerPage": 100},
         )
 
-    def get_forum_thread_content(self, classId: str = None, threadId: str = None) -> dict:
+    def get_forum_thread_content(
+        self, classId: str = None, threadId: str = None
+    ) -> dict:
         """
         Description
         ----------
@@ -538,10 +547,10 @@ class bimay:
         ----------
         classId : str optional
             classId to get forum thread content from (default: latest thread)
-        
+
         threadId : str optional
             threadId to get forum thread content from (default: latest thread)
-            
+
         Returns
         -------
         forum : dict
@@ -555,7 +564,9 @@ class bimay:
             params={"originMultiClassId": None},
         )
 
-    def get_forum_thread_comment(self, classId: str = None, threadId: str = None) -> dict:
+    def get_forum_thread_comment(
+        self, classId: str = None, threadId: str = None
+    ) -> dict:
         """
         Description
         ----------
@@ -565,10 +576,10 @@ class bimay:
         ----------
         classId : str optional
             classId to get forum thread comment from (default: latest thread)
-        
+
         threadId : str optional
             threadId to get forum thread comment from (default: latest thread)
-        
+
         Returns
         -------
         forum : dict
