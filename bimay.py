@@ -1,8 +1,5 @@
-import string
 import requests
-import time
 import datetime
-import json
 from dateutil.relativedelta import relativedelta
 
 
@@ -132,7 +129,10 @@ class bimay:
             headers = self.headers
         response = self.r.get(url, params=params, json=json_data, headers=headers)
         if response.status_code == 200:
-            return response.json()
+            try:
+                return response.json()
+            except:
+                return response.text
         if response.status_code == 204:
             raise Exception("No Content")
         raise Exception(response.status_code, response.text)
@@ -162,7 +162,10 @@ class bimay:
             headers = self.headers
         response = self.r.post(url, params=params, json=json_data, headers=headers)
         if response.status_code == 200:
-            return response.json()
+            try:
+                return response.json()
+            except:
+                return response.text
         if response.status_code == 204:
             raise Exception("No Content")
         raise Exception(response.status_code, response.text)
@@ -198,6 +201,57 @@ class bimay:
                     break
             return academicPeriod
         raise Exception(response.text)
+    
+    def get_latest_academic_start_end_date(self) -> tuple:
+        """
+        Description
+        ----------
+        fetches latest academicPeriod from BinusMaya
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        start_date : datetime.datetime
+            academicPeriod start date from BinusMaya
+        end_date : datetime.datetime
+            academicPeriod end date from BinusMaya
+        """
+        academic_period = self.get_latest_academicPeriod()
+        start_date = datetime.datetime.strptime(academic_period["termBeginDate"], "%Y-%m-%dT%H:%M:%S")
+        end_date = datetime.datetime.strptime(academic_period["termEndDate"], "%Y-%m-%dT%H:%M:%S")
+        return start_date, end_date
+
+    def get_schedule(
+        self, date_start: datetime.datetime, end_date: datetime.datetime = None
+    ) -> dict:
+        """
+        Description
+        ----------
+        fetches schedule from BinusMaya
+
+        Parameters
+        ----------
+        date_start : datetime.datetime mandatory
+            start date of schedule
+
+        end_date : datetime.datetime mandatory
+            end date of schedule
+
+        Returns
+        -------
+        schedule : dict
+            schedule from BinusMaya
+        """
+        if end_date is not None:
+            if (end_date - date_start).days > 30:
+                return self.get_schedule_month(date_start)
+            else:
+                return self.get_schedule_date(date_start, end_date)
+        else:
+            return self.get_schedule_date(date_start)
 
     def get_schedule_date(
         self, date_start: datetime.datetime, date_end: datetime.datetime = None
@@ -237,13 +291,16 @@ class bimay:
                 date_start + datetime.timedelta(days=x)
                 for x in range(0, (date_end - date_start).days)
             ):
-                for i in range(len(fetch_schedule(date)["Schedule"])):
-                    schedules.append(fetch_schedule(date)["Schedule"][i])
+                try:
+                    schedules_ = fetch_schedule(date=date)["Schedule"]
+                except:
+                    pass
+                for i in range(len(schedules_)):
+                    schedules.append(schedules_[i])
             first_date_start = min(schedules, key=lambda x: x["dateStart"])["dateStart"]
             data = {"dateStart": first_date_start, "Schedule": schedules}
             return data
 
-    # dispose this? feels redundant
     def get_schedule_month(
         self, month_start: datetime.datetime, month_end: datetime.datetime = None
     ) -> dict:
@@ -501,6 +558,29 @@ class bimay:
         for i in range(len(resources)):
             if resources[i]["resourceType"] == "Document":
                 return get_source_url(resources[i]["id"])
+
+    def post_student_progress(self, resourceId: str) -> dict:
+        """
+        Description
+        ----------
+        post resource student progress to BinusMaya
+
+        Parameters
+        ----------
+        resourceId : str
+            resourceId to post student progress to
+
+        Returns
+        -------
+        progress : dict
+            progress information from BinusMaya
+        """
+        data = {"resourceId": resourceId, "status": 2}
+        self.__post_data(
+            f"{self.base_url}/func-bm7-course-prod/StudentProgress",
+            json_data= data,
+        )
+        return data
 
     # --forum-- #
     def get_forum_latest(self, classId: str = None) -> dict:
