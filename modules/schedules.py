@@ -78,3 +78,4 @@ def get_schedule_month(
         first_date_start = min(schedules, key=lambda x: x["dateStart"])["dateStart"]
         data = {"dateStart": first_date_start, "Schedule": schedules}
         return data
+    

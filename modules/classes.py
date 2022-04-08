@@ -53,7 +53,8 @@ def get_class_sessions_from_class_id(self, classId: str) -> dict:
 
 def get_class_session_detail(self, classSessionId: str = None) -> dict:
     if classSessionId is None:
-        classSessionId = self.__default_classSessionId()
+        classSessionId = default_classSessionId()
     return self.get_data(
         f"{self.base_url}/func-bm7-course-prod/ClassSession/Session/{classSessionId}/Resource/Student"
     )
+    

@@ -228,7 +228,7 @@ class bimay:
         """
         if end_date is not None:
             if (end_date - date_start).days > 30:
-                return self.get_schedule_month(date_start)
+                return self.get_schedule_month(date_start, end_date)
             else:
                 return self.get_schedule_date(date_start, end_date)
         else:
