@@ -1,3 +1,4 @@
+import json
 import requests
 import datetime
 from modules import classes, forums, schedules, resources, academic_period

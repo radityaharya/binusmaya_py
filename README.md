@@ -42,50 +42,70 @@ print(bm.get_schedule_date(date_start = datetime.datetime.now()))
 
 ```json
 [
-  {
-    "dateStart": "2022-03-01T07:20:00",
-    "dateEnd": "2022-03-01T08:50:00",
-    "title": "[redacted]",
-    "content": "[redacted]",
-    "location": null,
-    "locationValue": null,
-    "scheduleType": "Virtual Class",
-    "customParam": {
-      "classId": "[redacted]",
-      "classSessionId": "[redacted]",
-      "sessionNumber": 2,
-      "classSessionContentId": "[redacted]"
-    },
-    "classDeliveryMode": "VC",
-    "deliveryMode": "VC",
-    "deliveryModeDesc": "Video Conference",
-    "academicCareerDesc": "Undergraduate",
-    "institutionDesc": "BINUS University",
-    "organizationRoleId": "[redacted]"
-  },
-  {
-    "dateStart": "2022-03-01T09:20:00",
-    "dateEnd": "2022-03-01T10:50:00",
-    "title": "[redacted]",
-    "content": "[redacted]",
-    "location": null,
-    "locationValue": null,
-    "scheduleType": "Virtual Class",
-    "customParam": {
-      "classId": "[redacted]",
-      "classSessionId": "[redacted]",
-      "sessionNumber": 2,
-      "classSessionContentId": "[redacted]"
-    },
-    "classDeliveryMode": "VC",
-    "deliveryMode": "VC",
-    "deliveryModeDesc": "Video Conference",
-    "academicCareerDesc": "Undergraduate",
-    "institutionDesc": "BINUS University",
-    "organizationRoleId": "[redacted]"
-  }
+    {
+        "class_id": "[redacted]",
+        "class_session_id": "[redacted]",
+        "course_name": "[redacted]",
+        "course_class": "[redacted]",
+        "session_number": 7,
+        "delivery_mode": "VC",
+        "join_url": "[redacted]",
+        "location": {
+            "location": null,
+            "location_value": null
+        },
+        "date_start": "[redacted]",
+        "date_end": "[redacted]",
+        "topic": "[redacted]",
+        "subtopic": ["[redacted]"],
+        "resources": [
+            {
+                "resource_id": "[redacted]",
+                "resource_name": "Video Conference",
+                "resource_type": null,
+                "resource_url": null,
+                "resource_is_open": true
+            },
+            {
+                "resource_id": "[redacted]",
+                "resource_name": "[redacted]",
+                "resource_type": null,
+                "resource_url": "[redacted]",
+                "resource_is_open": true
+            },
+            {
+                "resource_id": "[redacted]",
+                "resource_name": "[redacted]",
+                "resource_type": "pptx",
+                "resource_url": "[redacted]",
+                "resource_is_open": true
+            },
+            {
+                "resource_id": "[redacted]",
+                "resource_name": "[redacted]",
+                "resource_type": null,
+                "resource_url": "[redacted]",
+                "resource_is_open": true
+            },
+            {
+                "resource_id": "[redacted]",
+                "resource_name": "[redacted]",
+                "resource_type": null,
+                "resource_url": "[redacted]",
+                "resource_is_open": true
+            },
+            {
+                "resource_id": "[redacted]",
+                "resource_name": "Javascript Introduction",
+                "resource_type": null,
+                "resource_url": "[redacted]",
+                "resource_is_open": true
+            }
+        ],
+        "is_ended": true
+    }
 ]
 ```
 
-Disclaimer: This project is not affiliated, associated, authorized, endorsed by, or in any way officially related to "Bina Nusantara University" and or "BinusMaya" and it is used for personal use only.
+Disclaimer: This project is not affiliated, associated, authorized, endorsed by, or in any way officially related to "Bina Nusantara University" and or "BinusMaya" and it is used for personal use only. The author is not liable for any damage that may occur from the use of this project.
 contact@radityaharya.me

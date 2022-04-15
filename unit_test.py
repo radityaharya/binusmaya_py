@@ -1,10 +1,11 @@
+import datetime
+import warnings
+
+import bimay
 import unittest
 import os
 from dotenv import load_dotenv
 load_dotenv()
-import bimay
-import datetime
-import warnings
 
 
 SAMPLE_CLASS_ID = os.getenv("SAMPLE_CLASS_ID")
@@ -23,7 +24,7 @@ class testBimay(unittest.TestCase):
         self.assertEqual(type(bm.get_latest_academic_start_end_date()), tuple)
     
     def test_get_schedule_date(self):
-        self.assertEqual(type(bm.get_schedule_date(datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(days=1))), dict)
+        self.assertEqual(type(bm.get_schedule_date(datetime.datetime.now() - datetime.timedelta(days= 4))), dict)
     
     def test_get_schedule_month(self):
         self.assertEqual(type(bm.get_schedule_month(datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(days=30))), dict)
