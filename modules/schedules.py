@@ -34,8 +34,6 @@ def get_schedule_date(
                 pass
             for i in range(len(schedules_)):
                 schedules.append(schedules_[i])
-        import rich
-        rich.print(schedules)
         first_date_start = min(schedules, key=lambda x: x["dateStart"])["dateStart"]
         data = {
             "dateStart": first_date_start,
