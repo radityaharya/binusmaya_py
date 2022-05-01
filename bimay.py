@@ -1,8 +1,11 @@
 import json
 import requests
 import datetime
-from modules import classes, forums, schedules, resources, academic_period
-
+try:
+    from binusmaya_py.modules import classes, forums, schedules, resources, academic_period
+except ImportError:
+    from modules import classes, forums, schedules, resources, academic_period
+    
 class bimay:
     """
     Attributes

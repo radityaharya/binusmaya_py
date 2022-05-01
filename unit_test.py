@@ -24,7 +24,7 @@ class testBimay(unittest.TestCase):
         self.assertEqual(type(bm.get_latest_academic_start_end_date()), tuple)
     
     def test_get_schedule_date(self):
-        self.assertEqual(type(bm.get_schedule_date(datetime.datetime.now() - datetime.timedelta(days= 4))), dict)
+        self.assertEqual(type(bm.get_schedule_date(datetime.datetime.now() - datetime.timedelta(days= 20))), dict)
     
     def test_get_schedule_month(self):
         self.assertEqual(type(bm.get_schedule_month(datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(days=30))), dict)

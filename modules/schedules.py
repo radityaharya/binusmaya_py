@@ -32,8 +32,10 @@ def get_schedule_date(
                 schedules_ = fetch_schedule(date=date)["Schedule"]
             except Exception as no_content:
                 pass
-            for schedule in enumerate(schedules_):
-                schedules.append(schedule)
+            for i in range(len(schedules_)):
+                schedules.append(schedules_[i])
+        import rich
+        rich.print(schedules)
         first_date_start = min(schedules, key=lambda x: x["dateStart"])["dateStart"]
         data = {
             "dateStart": first_date_start,
