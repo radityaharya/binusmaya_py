@@ -7,15 +7,15 @@ Python wrapper for Binusmaya web API
 1. Import repo
     
     ```bash
-    git clone https://github.com/radityaharya/binusmaya.py
+    git clone https://github.com/radityaharya/binusmaya_py
     ```
     
     ```bash
-    gh repo clone radityaharya/binusmaya.py
+    gh repo clone radityaharya/binusmaya_py
     ```
     
     ```bash
-    wget https://github.com/radityaharya/binusmaya.py/archive/refs/heads/master.zip
+    wget https://github.com/radityaharya/binusmaya_py/archive/refs/heads/master.zip
     unzip master.zip
     ```
     
@@ -29,12 +29,12 @@ Python wrapper for Binusmaya web API
 ### Example
 
 ```python
-from bimay import bimay
+from binusmaya_py.bimay import bimay
 import dotenv
 import os
 
 dotenv.load_dotenv()
-bm = bimay(token=os.getenv("token"), roleId=os.getenv("roleId"))
+bm = bimay(token=os.getenv("BIMAY_TOKEN"), roleId=os.getenv("BIMAY_ROLEID"))
 print(bm.get_schedule_date(date_start = datetime.datetime.now()))
 ```
 
