@@ -1,78 +1,15 @@
 import json
 import requests
 import datetime
+
+
 try:
-    from binusmaya_py.modules import classes, forums, schedules, resources, academic_period
-except ImportError:
-    from modules import classes, forums, schedules, resources, academic_period
+    from modules import classes, forums, schedules, resources, academic_period, user_profile
+except ModuleNotFoundError:
+    from binusmaya_py.modules import classes, forums, schedules, resources, academic_period, user_profile
     
 class bimay:
-    """
-    Attributes
-    ----------
-    roleId : str
-        roleId from bimay
-    token : str
-        Bearer token from bimay
-
-    Methods
-    -------
-
-    --schedule--
-
-    get_latest_academicPeriod()
-        returns: latest academic period
-
-    get_schedule_date(date_start, date_end)
-        returns: schedule date from date_start to date_end
-
-    get_schedule_month(date)
-        returns: schedule date from date to date
-
-    get_class_component_list(period)
-        returns: class component list
-
-    get_class_from_component(period, classComponentId)
-        returns: Array of class information dicts [{"classId","classCode","courseName", "courseCode", "lecturers[]", "progressClass", "ssrComponent", "classGroupId"}]
-
-    get_class_active()
-        returns: Array of active classes
-
-    --classSessions--
-
-    get_class_session_from_class_id(classId)
-        returns: class session information from given classId
-
-    get_class_session_detail(classSessionId)
-        returns: class session detail information from given classSessionId (defaults to ongoing/upcoming class session)
-
-    --resources--
-
-    get_resource_from_resource_id(resourceId)
-        returns: resource information from given resourceId
-
-    get_ppt_from_session_id(classSessionId)
-        returns: ppt direct link from given classSessionId
-
-    --forum--
-
-    get_forum_latest(classId)
-        returns: latest forum information from given classId (defaults to all active classId)
-
-    get_forum_from_class_id(classId)
-        returns: forum informations from given classId
-
-    get_forum_thread(classId, sessionId)
-        returns: forum thread information including threadId from given classId and sessionId
-
-    get_forum_thread_content(classId, threadId)
-        returns: forum thread content information from given classId and threadId (defaults to latest thread)
-
-    get_forum_thread_comment(classId, threadId)
-        returns: forum thread comment information from given classId and threadId (defaults to latest thread)
-    """
-
-    def __init__(self, roleId, token):
+    def __init__(self, token: str, roleId: str = None):
         """
         Description
         ----------
@@ -80,7 +17,7 @@ class bimay:
 
         Parameters
         ----------
-        roleId : str mandatory
+        roleId : str optional
             roleId from bimay
 
         token : str mandatory
@@ -92,12 +29,20 @@ class bimay:
         """
         if token.startswith("Bearer "):
             token = token[7:]
+        self.token = token
+        self.r = requests.Session()
+        if roleId is None:
+            self.roleId = user_profile.get_user_info(self)["role_id"]
+        else:
+            self.roleId = roleId
+            
         self.headers = {
             "Authorization": "Bearer {}".format(token),
             "institution": "BNS01",
             "Content-Type": "application/json",
             "academicCareer": "RS1",
-            "roleId": roleId,
+            # "roleId": roleId if roleId is not None else user_profile.get_user_info(self)["role_id"],
+            "roleId": self.roleId,
             "Accept": "application/json, text/plain, */*",
             "roleName": "Student",
             "Origin": "https://newbinusmaya.binus.ac.id",
@@ -105,7 +50,6 @@ class bimay:
         }
         self.base_url = "https://apim-bm7-prod.azure-api.net"
         self.schedule_base_url = "https://func-bm7-schedule-prod.azurewebsites.net"
-        self.r = requests.Session()
 
     def get_data(self, url, json_data=None, params=None, headers=None) -> dict:
         """
@@ -572,3 +516,20 @@ class bimay:
             forum information from BinusMaya
         """
         return forums.get_forum_thread_comment(self, classId, threadId)
+    
+    def get_user_profile(self) -> dict:
+        """
+        Description
+        ----------
+        fetches user profile from BinusMaya
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        userProfile : dict
+            user profile information from BinusMaya
+        """
+        return user_profile.get_user_profile(self)

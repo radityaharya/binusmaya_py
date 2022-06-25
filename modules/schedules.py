@@ -99,6 +99,16 @@ def get_schedule_month(
         return data
 
 
+def resource_url_reformat(resource_type: str, url: str):
+    if resource_type == "pdf" or resource_type == "ppt" or resource_type == "pptx":
+        url.replace(
+            "https://stbm7resourcesprod.blob.core.windows.net:443/resources/",
+            "https://databinuscampussolution.blob.core.windows.net/bol/",
+        ).split("?")[0]
+
+    return url
+
+
 def schedule_formater(self, schedules: list):
     formated_schedules = []
     for schedule in schedules:
@@ -125,8 +135,10 @@ def schedule_formater(self, schedules: list):
                 {
                     "resource_id": resource["id"],
                     "resource_name": resource["name"],
-                    "resource_type": resource["type"],
-                    "resource_url": resource["url"],
+                    "resource_type": resource["resourceType"],
+                    "resource_url": resource_url_reformat(
+                        resource["resourceType"], resource["url"]
+                    ),
                     "resource_is_open": resource["isOpen"],
                 }
                 for resource in class_session_detail["resources"]
@@ -138,6 +150,7 @@ def schedule_formater(self, schedules: list):
                 resource["resource_type"] == "ppt"
                 or resource["resource_type"] == "pptx"
                 or resource["resource_type"] == "pdf"
+                or resource["resource_type"] == "Document"
             ):
                 resource["resource_url"] = (
                     resource["resource_url"]
@@ -149,3 +162,4 @@ def schedule_formater(self, schedules: list):
                 )
         formated_schedules.append(formated_schedule)
     return formated_schedules
+  
