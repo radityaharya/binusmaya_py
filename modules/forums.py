@@ -6,14 +6,16 @@ def get_forum_latest(self, classId: str = None) -> dict:
         )
     else:
         return self.post_data(
-            f"{self.base_url}/func-bm7-forum-prod/Forum/LatestPostForum",
+            f"{self.base_url}/func-bm7-for um-prod/Forum/LatestPostForum",
             json_data=[{"classId": classId}],
         )
+
 
 def get_forum_from_class_id(self, classId: str = None) -> dict:
     return self.get_data(
         f"{self.base_url}/func-bm7-course-prod/Forum/Class/{classId}/Student"
     )
+
 
 def get_forum_thread(self, classId: str = None, sessionId: str = None) -> dict:
     if classId is None:
@@ -23,9 +25,8 @@ def get_forum_thread(self, classId: str = None, sessionId: str = None) -> dict:
         json_data={"TotalDataPerPage": 100},
     )
 
-def get_forum_thread_content(
-    self, classId: str = None, threadId: str = None
-) -> dict:
+
+def get_forum_thread_content(self, classId: str = None, threadId: str = None) -> dict:
     if classId is None and threadId is None:
         classId = self.get_forum_latest()["latestPost"][0]["classId"]
         threadId = self.get_forum_latest()["latestPost"][0]["threadId"]
@@ -34,9 +35,8 @@ def get_forum_thread_content(
         params={"originMultiClassId": None},
     )
 
-def get_forum_thread_comment(
-    self, classId: str = None, threadId: str = None
-) -> dict:
+
+def get_forum_thread_comment(self, classId: str = None, threadId: str = None) -> dict:
     if classId is None and threadId is None:
         classId = self.get_forum_latest()["latestPost"][0]["classId"]
         threadId = self.get_forum_latest()["latestPost"][0]["threadId"]
@@ -49,4 +49,3 @@ def get_forum_thread_comment(
             "forumId": classId,
         },
     )
-    

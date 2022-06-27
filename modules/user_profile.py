@@ -1,10 +1,14 @@
 def get_profile(self):
     _headers = {
         "Authorization": "Bearer " + self.token,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
-    data = self.get_data("https://apim-bm7-prod.azure-api.net/func-bm7-profile-prod/UserProfile", headers = _headers)
+    data = self.get_data(
+        "https://apim-bm7-prod.azure-api.net/func-bm7-profile-prod/UserProfile",
+        headers=_headers,
+    )
     return data
+
 
 def get_user_info(self):
     data = get_profile(self)
@@ -14,11 +18,7 @@ def get_user_info(self):
             for role in data["roleCategories"]
             if "roles" in role
             and next(
-                (
-                    role
-                    for role in role["roles"]
-                    if role["isPrimary"]
-                ),
+                (role for role in role["roles"] if role["isPrimary"]),
                 None,
             )
         ),
@@ -32,6 +32,6 @@ def get_user_info(self):
         "user_picture_url": data["userPictureUrl"],
         "role_id": primary_role["roles"][0]["roleId"],
         "NIM": primary_role["roles"][0]["userCode"],
-        "academic_program" : primary_role["roles"][0]["academicProgramDesc"],
+        "academic_program": primary_role["roles"][0]["academicProgramDesc"],
     }
     return user_info

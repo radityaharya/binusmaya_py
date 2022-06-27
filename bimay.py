@@ -4,10 +4,25 @@ import datetime
 
 
 try:
-    from modules import classes, forums, schedules, resources, academic_period, user_profile
+    from modules import (
+        classes,
+        forums,
+        schedules,
+        resources,
+        academic_period,
+        user_profile,
+    )
 except ModuleNotFoundError:
-    from binusmaya_py.modules import classes, forums, schedules, resources, academic_period, user_profile
-    
+    from binusmaya_py.modules import (
+        classes,
+        forums,
+        schedules,
+        resources,
+        academic_period,
+        user_profile,
+    )
+
+
 class bimay:
     def __init__(self, token: str, roleId: str = None):
         """
@@ -35,7 +50,7 @@ class bimay:
             self.roleId = user_profile.get_user_info(self)["role_id"]
         else:
             self.roleId = roleId
-            
+
         self.headers = {
             "Authorization": "Bearer {}".format(token),
             "institution": "BNS01",
@@ -133,7 +148,7 @@ class bimay:
             academicPeriod from BinusMaya
         """
         return academic_period.get_latest_academicPeriod(self)
-    
+
     def get_latest_academic_start_end_date(self) -> tuple:
         """
         Description
@@ -322,7 +337,7 @@ class bimay:
             default classId from ongoing(if any) class or upcoming(if any) class
         """
         return classes.default_classId(self)
-    
+
     def get_class_sessions_from_class_id(self, classId: str) -> dict:
         """
         Description
@@ -516,17 +531,17 @@ class bimay:
             forum information from BinusMaya
         """
         return forums.get_forum_thread_comment(self, classId, threadId)
-    
+
     def get_user_profile(self) -> dict:
         """
         Description
         ----------
         fetches user profile from BinusMaya
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         userProfile : dict

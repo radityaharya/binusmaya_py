@@ -162,4 +162,3 @@ def schedule_formater(self, schedules: list):
                 )
         formated_schedules.append(formated_schedule)
     return formated_schedules
-  
