@@ -4,7 +4,7 @@ import datetime
 
 
 try:
-    from modules import (
+    from .modules import (
         classes,
         forums,
         schedules,
