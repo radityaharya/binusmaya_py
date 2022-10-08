@@ -1,4 +1,4 @@
-# binusmaya.py
+# binusmaya_py
 
 Python wrapper for Binusmaya web API
 
@@ -24,17 +24,22 @@ Python wrapper for Binusmaya web API
     ```bash
     pip install -r requirements.txt
     ```
+
+3. Install package
     
+    ```bash
+    pip install .
+    ```
 
 ### Example
 
 ```python
-from binusmaya_py.bimay import bimay
+binusmayapy.bimay import Bimay
 import dotenv
 import os
 
 dotenv.load_dotenv()
-bm = bimay(token=os.getenv("BIMAY_TOKEN"), roleId=os.getenv("BIMAY_ROLEID"))
+bm = Bimay(token=os.getenv("BIMAY_TOKEN"))
 print(bm.get_schedule_date(date_start = datetime.datetime.now()))
 ```
 

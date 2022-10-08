@@ -1,4 +1,4 @@
-python-dotenv==0.20.0
-requests==2.22.0
-selenium==4.1.5
-selenium_wire==4.6.3
+python-dotenv
+requests
+selenium
+selenium_wire

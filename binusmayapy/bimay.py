@@ -1,29 +1,18 @@
-import json
 import requests
 import datetime
 
 
-try:
-    from .modules import (
-        classes,
-        forums,
-        schedules,
-        resources,
-        academic_period,
-        user_profile,
-    )
-except ModuleNotFoundError:
-    from binusmaya_py.modules import (
-        classes,
-        forums,
-        schedules,
-        resources,
-        academic_period,
-        user_profile,
-    )
+from .modules import (
+    classes,
+    forums,
+    schedules,
+    resources,
+    academic_period,
+    user_profile,
+)
 
 
-class bimay:
+class Bimay:
     def __init__(self, token: str, roleId: str = None):
         """
         Description
@@ -547,4 +536,4 @@ class bimay:
         userProfile : dict
             user profile information from BinusMaya
         """
-        return user_profile.get_user_profile(self)
+        return user_profile.get_user_info(self)
