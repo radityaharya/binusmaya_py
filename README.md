@@ -7,7 +7,7 @@ Python wrapper for Binusmaya web API
 1. Install package
     
     ```bash
-    pip binusmayapy
+    pip install binusmayapy
     ```
 
 ### Example
