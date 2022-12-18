@@ -4,31 +4,10 @@ Python wrapper for Binusmaya web API
 
 ## Usage
 
-1. Import repo
+1. Install package
     
     ```bash
-    git clone https://github.com/radityaharya/binusmaya_py
-    ```
-    
-    ```bash
-    gh repo clone radityaharya/binusmaya_py
-    ```
-    
-    ```bash
-    wget https://github.com/radityaharya/binusmaya_py/archive/refs/heads/master.zip
-    unzip master.zip
-    ```
-    
-2. Install requirements 
-    
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Install package
-    
-    ```bash
-    pip install .
+    pip binusmayapy
     ```
 
 ### Example
