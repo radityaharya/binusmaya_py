@@ -13,7 +13,7 @@ Python wrapper for Binusmaya web API
 ### Example
 
 ```python
-binusmayapy.bimay import Bimay
+from binusmayapy import bimay
 import dotenv
 import os
 
