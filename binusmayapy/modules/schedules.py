@@ -54,20 +54,27 @@ def get_schedule_month(
     self, month_start: datetime.datetime, month_end: datetime.datetime = None
 ) -> dict:
     def fetch_schedule(month):
-        rawschedules = self.post_data(
-            "{}/api/schedule/Month-v1/{}".format(
-                self.schedule_base_url, month.strftime("%Y-%-m-1")
-            ),
-            json_data={},
-        )
-        first_date_start = min(rawschedules, key=lambda x: x["dateStart"])["dateStart"]
-        schedules = []
+        try:
+            rawschedules = self.post_data(
+                "{}/api/schedule/Month-v1/{}".format(
+                    self.schedule_base_url, month.strftime("%Y-%-m-1")
+                ),
+                json_data={},
+            )
+            schedules = [x for x in rawschedules if x is not None]
+            first_date_start = min(rawschedules, key=lambda x: x["dateStart"])[
+                "dateStart"
+            ]
+            schedules = []
 
-        for i in range(len(rawschedules)):
-            for j in range(len(rawschedules[i]["Schedule"])):
-                schedules.append(rawschedules[i]["Schedule"][j])
-        data = {"dateStart": first_date_start, "Schedule": schedules}
-        return data
+            for i in range(len(rawschedules)):
+                for j in range(len(rawschedules[i]["Schedule"])):
+                    schedules.append(rawschedules[i]["Schedule"][j])
+            data = {"dateStart": first_date_start, "Schedule": schedules}
+            return data
+        except Exception as no_content:
+            print(no_content)
+            return None
 
     if month_end is None:
         schedules = fetch_schedule(month=month_start)["Schedule"]
