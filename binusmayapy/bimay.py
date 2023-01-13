@@ -362,6 +362,26 @@ class Bimay:
             class session detail from BinusMaya
         """
         return classes.get_class_session_detail(self, classSessionId)
+    
+    def get_class_attendance_from_class_id(self, classId: str = None) -> dict:
+        """
+        Description
+        ----------
+        fetches class attendance from BinusMaya by classId
+
+        Parameters
+        ----------
+        classId : str optional
+            classId to get class attendance from (default: classId from ongoing(if any) class or upcoming(if any) class)
+
+        Returns
+        -------
+        classAttendance : dict
+            class attendance from BinusMaya
+        """
+        if classId is None:
+            classId = self.default_classId()
+        return classes.get_class_attendance_from_class_id(self, classId)
 
     # --resource-- #
     def get_resource_from_resource_id(self, resourceId: str = None) -> dict:
