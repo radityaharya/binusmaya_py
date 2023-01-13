@@ -14,6 +14,21 @@ driver = webdriver.Firefox(service=service, options=options)
 
 
 def login(email: str, password: str):
+    """It opens a browser, navigates to the login page, fills in the email and password, clicks the login
+    button, and then returns the token
+
+    Parameters
+    ----------
+    email : str
+        Your BINUS email
+    password : str
+        Your BINUS MAYA password
+
+    Returns
+    -------
+        The token is being returned
+
+    """
     try:
         wait = WebDriverWait(driver, 30)
         driver.get("https://newbinusmaya.binus.ac.id")

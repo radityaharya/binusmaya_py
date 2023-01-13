@@ -1,7 +1,7 @@
 import datetime
 import warnings
 
-import bimay
+from binusmayapy.bimay import Bimay
 import unittest
 import os
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ SAMPLE_CLASS_ID = os.getenv("SAMPLE_CLASS_ID")
 SAMPLE_CLASS_SESSION_ID = os.getenv("SAMPLE_CLASS_SESSION_ID")
 SAMPLE_RESOURCE_ID = os.getenv("SAMPLE_RESOURCE_ID")
 
-bm = bimay.bimay(token=os.getenv("BIMAY_TOKEN"), roleId=os.getenv("BIMAY_ROLEID"))
+bm = Bimay(token=os.getenv("BIMAY_TOKEN"))
 
 
 class testBimay(unittest.TestCase):
@@ -30,7 +30,8 @@ class testBimay(unittest.TestCase):
         self.assertEqual(
             type(
                 bm.get_schedule_date(
-                    datetime.datetime.now() - datetime.timedelta(days=20)
+                    date_start=datetime.datetime.now(),
+                    date_end=datetime.datetime.now() + datetime.timedelta(days=14),
                 )
             ),
             dict,
