@@ -362,7 +362,7 @@ class Bimay:
             class session detail from BinusMaya
         """
         return classes.get_class_session_detail(self, classSessionId)
-    
+
     def get_class_attendance_from_class_id(self, classId: str = None) -> dict:
         """
         Description
