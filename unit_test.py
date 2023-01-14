@@ -67,6 +67,11 @@ class testBimay(unittest.TestCase):
             type(bm.get_class_session_detail(SAMPLE_CLASS_SESSION_ID)), dict
         )
 
+    def test_get_class_attendance_from_class_id(self):
+        self.assertEqual(
+            type(bm.get_class_attendance_from_class_id(SAMPLE_CLASS_ID)), dict
+        )
+    
     def test_get_resource_from_resource_id(self):
         self.assertEqual(
             type(bm.get_resource_from_resource_id(SAMPLE_RESOURCE_ID)), dict

@@ -19,7 +19,7 @@ class ForumsAPI:
             )
         else:
             return self.post_data(
-                f"{self.base_url}/func-bm7-for um-prod/Forum/LatestPostForum",
+                f"{self.base_url}/func-bm7-forum-prod/Forum/LatestPostForum",
                 json_data=[{"classId": classId}],
             )
 
